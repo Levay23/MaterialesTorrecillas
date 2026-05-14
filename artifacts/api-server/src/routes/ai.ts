@@ -5,15 +5,15 @@ import { logger } from "../lib/logger";
 
 const router: Router = Router();
 
-async function getOrCreateConfig() {
+export async function getOrCreateConfig() {
   const configs = await db.select().from(aiConfigTable).limit(1);
   const defaultPrompt = "Hola, soy Andrea, tu asistente virtual profesional de Materiales Torrecillas. Soy amable, experta en ferretería y construcción, y estoy aquí para ayudarte de manera eficiente. Siempre saludo cordialmente, soy muy educada y proporciono recomendaciones precisas basadas en las necesidades del cliente y nuestra base de conocimiento.";
   
   if (configs.length) {
     const config = configs[0];
-    // Actualizar si hay API Key en el entorno y no en la DB
     if (process.env.GROQ_API_KEY && (!config.apiKey || config.apiKey === "***")) {
       await db.update(aiConfigTable).set({ apiKey: process.env.GROQ_API_KEY, enabled: true }).where(eq(aiConfigTable.id, config.id));
+      config.apiKey = process.env.GROQ_API_KEY;
     }
     return config;
   }

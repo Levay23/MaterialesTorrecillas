@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import { db, conversationsTable, messagesTable, aiConfigTable, knowledgeItemsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { logger } from "../lib/logger";
+import { getOrCreateConfig } from "../routes/ai";
 
 let sock: any = null;
 let qrBase64: string | null = null;
@@ -36,10 +37,10 @@ export async function startConnection() {
     await fs.mkdir(SESSION_DIR, { recursive: true });
     const { state, saveCreds } = await useMultiFileAuthState(SESSION_DIR);
 
-    let version = [2, 3000, 1015920];
+    let version: [number, number, number] = [2, 3000, 1015920];
     try {
       const v = await fetchLatestBaileysVersion();
-      version = v.version;
+      version = v.version as [number, number, number];
     } catch {}
 
     const silentLogger = {
@@ -158,8 +159,8 @@ export async function startConnection() {
 
 async function handleAutoReply(convoId: number, jid: string, userMessage: string) {
   try {
-    const [config] = await db.select().from(aiConfigTable).limit(1);
-    if (!config?.apiKey) return;
+    const config = await getOrCreateConfig();
+    if (!config?.apiKey || config.apiKey === "***") return;
 
     const knowledge = await db.select().from(knowledgeItemsTable).limit(20);
     const knowledgeContext = knowledge.map(k => `${k.title}: ${k.content}`).join("\n");
