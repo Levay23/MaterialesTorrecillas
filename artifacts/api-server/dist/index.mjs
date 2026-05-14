@@ -32423,6 +32423,395 @@ var require_jsonwebtoken = __commonJS({
   }
 });
 
+// ../../node_modules/.pnpm/node-gyp-build@4.8.4/node_modules/node-gyp-build/node-gyp-build.js
+var require_node_gyp_build = __commonJS({
+  "../../node_modules/.pnpm/node-gyp-build@4.8.4/node_modules/node-gyp-build/node-gyp-build.js"(exports, module) {
+    var fs3 = __require("fs");
+    var path3 = __require("path");
+    var os = __require("os");
+    var runtimeRequire = typeof __webpack_require__ === "function" ? __non_webpack_require__ : __require;
+    var vars = process.config && process.config.variables || {};
+    var prebuildsOnly = !!process.env.PREBUILDS_ONLY;
+    var abi = process.versions.modules;
+    var runtime = isElectron() ? "electron" : isNwjs() ? "node-webkit" : "node";
+    var arch = process.env.npm_config_arch || os.arch();
+    var platform = process.env.npm_config_platform || os.platform();
+    var libc = process.env.LIBC || (isAlpine(platform) ? "musl" : "glibc");
+    var armv = process.env.ARM_VERSION || (arch === "arm64" ? "8" : vars.arm_version) || "";
+    var uv = (process.versions.uv || "").split(".")[0];
+    module.exports = load;
+    function load(dir) {
+      return runtimeRequire(load.resolve(dir));
+    }
+    load.resolve = load.path = function(dir) {
+      dir = path3.resolve(dir || ".");
+      try {
+        var name = runtimeRequire(path3.join(dir, "package.json")).name.toUpperCase().replace(/-/g, "_");
+        if (process.env[name + "_PREBUILD"]) dir = process.env[name + "_PREBUILD"];
+      } catch (err) {
+      }
+      if (!prebuildsOnly) {
+        var release = getFirst(path3.join(dir, "build/Release"), matchBuild);
+        if (release) return release;
+        var debug = getFirst(path3.join(dir, "build/Debug"), matchBuild);
+        if (debug) return debug;
+      }
+      var prebuild = resolve(dir);
+      if (prebuild) return prebuild;
+      var nearby = resolve(path3.dirname(process.execPath));
+      if (nearby) return nearby;
+      var target = [
+        "platform=" + platform,
+        "arch=" + arch,
+        "runtime=" + runtime,
+        "abi=" + abi,
+        "uv=" + uv,
+        armv ? "armv=" + armv : "",
+        "libc=" + libc,
+        "node=" + process.versions.node,
+        process.versions.electron ? "electron=" + process.versions.electron : "",
+        typeof __webpack_require__ === "function" ? "webpack=true" : ""
+        // eslint-disable-line
+      ].filter(Boolean).join(" ");
+      throw new Error("No native build was found for " + target + "\n    loaded from: " + dir + "\n");
+      function resolve(dir2) {
+        var tuples = readdirSync(path3.join(dir2, "prebuilds")).map(parseTuple);
+        var tuple2 = tuples.filter(matchTuple(platform, arch)).sort(compareTuples)[0];
+        if (!tuple2) return;
+        var prebuilds = path3.join(dir2, "prebuilds", tuple2.name);
+        var parsed = readdirSync(prebuilds).map(parseTags);
+        var candidates = parsed.filter(matchTags(runtime, abi));
+        var winner = candidates.sort(compareTags(runtime))[0];
+        if (winner) return path3.join(prebuilds, winner.file);
+      }
+    };
+    function readdirSync(dir) {
+      try {
+        return fs3.readdirSync(dir);
+      } catch (err) {
+        return [];
+      }
+    }
+    function getFirst(dir, filter) {
+      var files = readdirSync(dir).filter(filter);
+      return files[0] && path3.join(dir, files[0]);
+    }
+    function matchBuild(name) {
+      return /\.node$/.test(name);
+    }
+    function parseTuple(name) {
+      var arr = name.split("-");
+      if (arr.length !== 2) return;
+      var platform2 = arr[0];
+      var architectures = arr[1].split("+");
+      if (!platform2) return;
+      if (!architectures.length) return;
+      if (!architectures.every(Boolean)) return;
+      return { name, platform: platform2, architectures };
+    }
+    function matchTuple(platform2, arch2) {
+      return function(tuple2) {
+        if (tuple2 == null) return false;
+        if (tuple2.platform !== platform2) return false;
+        return tuple2.architectures.includes(arch2);
+      };
+    }
+    function compareTuples(a, b) {
+      return a.architectures.length - b.architectures.length;
+    }
+    function parseTags(file2) {
+      var arr = file2.split(".");
+      var extension = arr.pop();
+      var tags = { file: file2, specificity: 0 };
+      if (extension !== "node") return;
+      for (var i = 0; i < arr.length; i++) {
+        var tag = arr[i];
+        if (tag === "node" || tag === "electron" || tag === "node-webkit") {
+          tags.runtime = tag;
+        } else if (tag === "napi") {
+          tags.napi = true;
+        } else if (tag.slice(0, 3) === "abi") {
+          tags.abi = tag.slice(3);
+        } else if (tag.slice(0, 2) === "uv") {
+          tags.uv = tag.slice(2);
+        } else if (tag.slice(0, 4) === "armv") {
+          tags.armv = tag.slice(4);
+        } else if (tag === "glibc" || tag === "musl") {
+          tags.libc = tag;
+        } else {
+          continue;
+        }
+        tags.specificity++;
+      }
+      return tags;
+    }
+    function matchTags(runtime2, abi2) {
+      return function(tags) {
+        if (tags == null) return false;
+        if (tags.runtime && tags.runtime !== runtime2 && !runtimeAgnostic(tags)) return false;
+        if (tags.abi && tags.abi !== abi2 && !tags.napi) return false;
+        if (tags.uv && tags.uv !== uv) return false;
+        if (tags.armv && tags.armv !== armv) return false;
+        if (tags.libc && tags.libc !== libc) return false;
+        return true;
+      };
+    }
+    function runtimeAgnostic(tags) {
+      return tags.runtime === "node" && tags.napi;
+    }
+    function compareTags(runtime2) {
+      return function(a, b) {
+        if (a.runtime !== b.runtime) {
+          return a.runtime === runtime2 ? -1 : 1;
+        } else if (a.abi !== b.abi) {
+          return a.abi ? -1 : 1;
+        } else if (a.specificity !== b.specificity) {
+          return a.specificity > b.specificity ? -1 : 1;
+        } else {
+          return 0;
+        }
+      };
+    }
+    function isNwjs() {
+      return !!(process.versions && process.versions.nw);
+    }
+    function isElectron() {
+      if (process.versions && process.versions.electron) return true;
+      if (process.env.ELECTRON_RUN_AS_NODE) return true;
+      return typeof window !== "undefined" && window.process && window.process.type === "renderer";
+    }
+    function isAlpine(platform2) {
+      return platform2 === "linux" && fs3.existsSync("/etc/alpine-release");
+    }
+    load.parseTags = parseTags;
+    load.matchTags = matchTags;
+    load.compareTags = compareTags;
+    load.parseTuple = parseTuple;
+    load.matchTuple = matchTuple;
+    load.compareTuples = compareTuples;
+  }
+});
+
+// ../../node_modules/.pnpm/node-gyp-build@4.8.4/node_modules/node-gyp-build/index.js
+var require_node_gyp_build2 = __commonJS({
+  "../../node_modules/.pnpm/node-gyp-build@4.8.4/node_modules/node-gyp-build/index.js"(exports, module) {
+    var runtimeRequire = typeof __webpack_require__ === "function" ? __non_webpack_require__ : __require;
+    if (typeof runtimeRequire.addon === "function") {
+      module.exports = runtimeRequire.addon.bind(runtimeRequire);
+    } else {
+      module.exports = require_node_gyp_build();
+    }
+  }
+});
+
+// ../../node_modules/.pnpm/bcrypt@6.0.0/node_modules/bcrypt/promises.js
+var require_promises = __commonJS({
+  "../../node_modules/.pnpm/bcrypt@6.0.0/node_modules/bcrypt/promises.js"(exports, module) {
+    var Promise2 = global.Promise;
+    function promise2(fn, context, args) {
+      if (!Array.isArray(args)) {
+        args = Array.prototype.slice.call(args);
+      }
+      if (typeof fn !== "function") {
+        return Promise2.reject(new Error("fn must be a function"));
+      }
+      return new Promise2((resolve, reject2) => {
+        args.push((err, data) => {
+          if (err) {
+            reject2(err);
+          } else {
+            resolve(data);
+          }
+        });
+        fn.apply(context, args);
+      });
+    }
+    function reject(err) {
+      return Promise2.reject(err);
+    }
+    function use(promise3) {
+      Promise2 = promise3;
+    }
+    module.exports = {
+      promise: promise2,
+      reject,
+      use
+    };
+  }
+});
+
+// ../../node_modules/.pnpm/bcrypt@6.0.0/node_modules/bcrypt/bcrypt.js
+var require_bcrypt = __commonJS({
+  "../../node_modules/.pnpm/bcrypt@6.0.0/node_modules/bcrypt/bcrypt.js"(exports, module) {
+    var path3 = __require("path");
+    var bindings = require_node_gyp_build2()(path3.resolve(__dirname));
+    var crypto = __require("crypto");
+    var promises = require_promises();
+    function genSaltSync(rounds, minor) {
+      if (!rounds) {
+        rounds = 10;
+      } else if (typeof rounds !== "number") {
+        throw new Error("rounds must be a number");
+      }
+      if (!minor) {
+        minor = "b";
+      } else if (minor !== "b" && minor !== "a") {
+        throw new Error('minor must be either "a" or "b"');
+      }
+      return bindings.gen_salt_sync(minor, rounds, crypto.randomBytes(16));
+    }
+    function genSalt(rounds, minor, cb) {
+      let error40;
+      if (typeof arguments[0] === "function") {
+        cb = arguments[0];
+        rounds = 10;
+        minor = "b";
+      } else if (typeof arguments[1] === "function") {
+        cb = arguments[1];
+        minor = "b";
+      }
+      if (!cb) {
+        return promises.promise(genSalt, this, [rounds, minor]);
+      }
+      if (!rounds) {
+        rounds = 10;
+      } else if (typeof rounds !== "number") {
+        error40 = new Error("rounds must be a number");
+        return process.nextTick(function() {
+          cb(error40);
+        });
+      }
+      if (!minor) {
+        minor = "b";
+      } else if (minor !== "b" && minor !== "a") {
+        error40 = new Error('minor must be either "a" or "b"');
+        return process.nextTick(function() {
+          cb(error40);
+        });
+      }
+      crypto.randomBytes(16, function(error41, randomBytes) {
+        if (error41) {
+          cb(error41);
+          return;
+        }
+        bindings.gen_salt(minor, rounds, randomBytes, cb);
+      });
+    }
+    function hashSync(data, salt) {
+      if (data == null || salt == null) {
+        throw new Error("data and salt arguments required");
+      }
+      if (!(typeof data === "string" || data instanceof Buffer) || typeof salt !== "string" && typeof salt !== "number") {
+        throw new Error("data must be a string or Buffer and salt must either be a salt string or a number of rounds");
+      }
+      if (typeof salt === "number") {
+        salt = module.exports.genSaltSync(salt);
+      }
+      return bindings.encrypt_sync(data, salt);
+    }
+    function hash(data, salt, cb) {
+      let error40;
+      if (typeof data === "function") {
+        error40 = new Error("data must be a string or Buffer and salt must either be a salt string or a number of rounds");
+        return process.nextTick(function() {
+          data(error40);
+        });
+      }
+      if (typeof salt === "function") {
+        error40 = new Error("data must be a string or Buffer and salt must either be a salt string or a number of rounds");
+        return process.nextTick(function() {
+          salt(error40);
+        });
+      }
+      if (cb && typeof cb !== "function") {
+        return promises.reject(new Error("cb must be a function or null to return a Promise"));
+      }
+      if (!cb) {
+        return promises.promise(hash, this, [data, salt]);
+      }
+      if (data == null || salt == null) {
+        error40 = new Error("data and salt arguments required");
+        return process.nextTick(function() {
+          cb(error40);
+        });
+      }
+      if (!(typeof data === "string" || data instanceof Buffer) || typeof salt !== "string" && typeof salt !== "number") {
+        error40 = new Error("data must be a string or Buffer and salt must either be a salt string or a number of rounds");
+        return process.nextTick(function() {
+          cb(error40);
+        });
+      }
+      if (typeof salt === "number") {
+        return module.exports.genSalt(salt, function(err, salt2) {
+          return bindings.encrypt(data, salt2, cb);
+        });
+      }
+      return bindings.encrypt(data, salt, cb);
+    }
+    function compareSync(data, hash2) {
+      if (data == null || hash2 == null) {
+        throw new Error("data and hash arguments required");
+      }
+      if (!(typeof data === "string" || data instanceof Buffer) || typeof hash2 !== "string") {
+        throw new Error("data must be a string or Buffer and hash must be a string");
+      }
+      return bindings.compare_sync(data, hash2);
+    }
+    function compare(data, hash2, cb) {
+      let error40;
+      if (typeof data === "function") {
+        error40 = new Error("data and hash arguments required");
+        return process.nextTick(function() {
+          data(error40);
+        });
+      }
+      if (typeof hash2 === "function") {
+        error40 = new Error("data and hash arguments required");
+        return process.nextTick(function() {
+          hash2(error40);
+        });
+      }
+      if (cb && typeof cb !== "function") {
+        return promises.reject(new Error("cb must be a function or null to return a Promise"));
+      }
+      if (!cb) {
+        return promises.promise(compare, this, [data, hash2]);
+      }
+      if (data == null || hash2 == null) {
+        error40 = new Error("data and hash arguments required");
+        return process.nextTick(function() {
+          cb(error40);
+        });
+      }
+      if (!(typeof data === "string" || data instanceof Buffer) || typeof hash2 !== "string") {
+        error40 = new Error("data and hash must be strings");
+        return process.nextTick(function() {
+          cb(error40);
+        });
+      }
+      return bindings.compare(data, hash2, cb);
+    }
+    function getRounds(hash2) {
+      if (hash2 == null) {
+        throw new Error("hash argument required");
+      }
+      if (typeof hash2 !== "string") {
+        throw new Error("hash must be a string");
+      }
+      return bindings.get_rounds(hash2);
+    }
+    module.exports = {
+      genSaltSync,
+      genSalt,
+      hashSync,
+      hash,
+      compareSync,
+      compare,
+      getRounds
+    };
+  }
+});
+
 // src/app.ts
 var import_express19 = __toESM(require_express2(), 1);
 var import_cors = __toESM(require_lib3(), 1);
@@ -37246,7 +37635,7 @@ var health_default = router;
 // src/routes/auth.ts
 var import_express2 = __toESM(require_express2(), 1);
 var import_jsonwebtoken = __toESM(require_jsonwebtoken(), 1);
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 // ../../lib/db/src/index.ts
 import { drizzle } from "drizzle-orm/pglite";
@@ -49953,8 +50342,8 @@ var ai_default = router12;
 
 // src/routes/users.ts
 var import_express13 = __toESM(require_express2(), 1);
+var import_bcrypt = __toESM(require_bcrypt(), 1);
 import { eq as eq11 } from "drizzle-orm";
-import bcrypt2 from "bcrypt";
 var router13 = (0, import_express13.Router)();
 router13.get("/users", async (req, res) => {
   const users = await db.select({
@@ -49973,7 +50362,7 @@ router13.post("/users", async (req, res) => {
     res.status(400).json({ error: "Name, email, role, password required" });
     return;
   }
-  const hashed = await bcrypt2.hash(password, 10);
+  const hashed = await import_bcrypt.default.hash(password, 10);
   const [user] = await db.insert(usersTable).values({ name, email: email3, role, password: hashed }).returning();
   res.status(201).json({ id: user.id, name: user.name, email: user.email, role: user.role, active: user.active, createdAt: user.createdAt });
 });
@@ -50228,7 +50617,7 @@ app.use("/api", routes_default);
 var app_default = app;
 
 // src/index.ts
-import bcrypt3 from "bcrypt";
+import bcrypt3 from "bcryptjs";
 import { eq as eq15 } from "drizzle-orm";
 var rawPort = process.env["PORT"];
 if (!rawPort) {
