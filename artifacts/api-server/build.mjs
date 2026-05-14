@@ -70,6 +70,8 @@ async function buildAll() {
       "@google/*",
       "googleapis",
       "firebase-admin",
+      "@electric-sql/pglite",
+      "drizzle-orm",
       "@parcel/watcher",
       "@sentry/profiling-node",
       "@tree-sitter/*",

@@ -1,25 +1,39 @@
-FROM node:20-bullseye
+FROM node:20-slim
 
-# Instalar openssl para Baileys
-RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+# Instalar dependencias necesarias para módulos nativos
+RUN apt-get update && apt-get install -y \
+    openssl \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
-# Instalar pnpm
 RUN npm install -g pnpm@9 --no-fund --no-audit
 
 WORKDIR /app
-RUN mkdir -p /app/pgdata
 
-# Copiar TODO el proyecto (ya incluye dist/ pre-compilado)
+# Copiar archivos de configuración de pnpm para aprovechar el caché
+COPY pnpm-lock.yaml ./
+COPY package.json ./
+COPY pnpm-workspace.yaml ./
+COPY lib/db/package.json ./lib/db/
+COPY artifacts/api-server/package.json ./artifacts/api-server/
+COPY artifacts/ferremax/package.json ./artifacts/ferremax/
+
+# Instalar dependencias (incluyendo las necesarias para compilar módulos nativos)
+RUN pnpm install --no-frozen-lockfile
+
+# Copiar el resto del proyecto
 COPY . .
 
-# Instalar todas las dependencias (sin compilar módulos nativos)
-RUN pnpm install --ignore-scripts
+# Crear directorio de datos
+RUN mkdir -p /app/pgdata && chmod 777 /app/pgdata
 
-# Puerto requerido por Hugging Face
 EXPOSE 7860
 ENV PORT=7860
 ENV NODE_ENV=production
 ENV PGDATA_PATH=/app/pgdata
 
-# Arrancar con el bundle pre-compilado
-CMD ["node", "--enable-source-maps", "./artifacts/api-server/dist/index.mjs"]
+# Ejecutar el servidor directamente desde su carpeta para que encuentre node_modules
+WORKDIR /app/artifacts/api-server
+CMD ["node", "--enable-source-maps", "./dist/index.mjs"]
