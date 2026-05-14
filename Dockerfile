@@ -1,4 +1,4 @@
-FROM node:22-slim
+FROM node:20-slim
 
 # Instalar dependencias necesarias para Puppeteer/Baileys si fuera necesario
 RUN apt-get update && apt-get install -y \
