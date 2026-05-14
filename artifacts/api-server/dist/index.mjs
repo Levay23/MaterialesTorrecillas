@@ -64652,7 +64652,9 @@ var insertPaymentSchema = createInsertSchema(paymentsTable).omit({ id: true, cre
 
 // ../../lib/db/src/index.ts
 import path from "path";
-var pgdata = path.resolve(process.cwd(), "pgdata");
+import { fileURLToPath } from "url";
+var __dirname2 = path.dirname(fileURLToPath(import.meta.url));
+var pgdata = path.resolve(__dirname2, "..", "..", "..", "pgdata");
 var client = new Xe2(pgdata);
 var db = drizzle(client, { schema: schema_exports });
 
