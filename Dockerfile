@@ -16,13 +16,10 @@ COPY . .
 # Instalar dependencias
 RUN pnpm install
 
-# Construir los paquetes necesarios
-RUN pnpm --filter @workspace/api-server --if-present build
-
 # Hugging Face requiere el puerto 7860
 EXPOSE 7860
 ENV PORT=7860
 ENV NODE_ENV=production
 
-# Comando de inicio
-CMD ["pnpm", "--filter", "@workspace/api-server", "start"]
+# Comando de inicio usando tsx para evitar errores de esbuild en Linux
+CMD ["npx", "tsx", "artifacts/api-server/src/index.ts"]
