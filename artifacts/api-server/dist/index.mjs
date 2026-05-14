@@ -44119,10 +44119,11 @@ var insertPaymentSchema = createInsertSchema(paymentsTable).omit({ id: true, cre
 // ../../lib/db/src/index.ts
 import path from "path";
 import fs from "fs";
-var pgdata = process.platform === "linux" ? "/app/pgdata" : path.resolve(process.cwd(), "pgdata");
+var pgdata = process.platform === "linux" ? "/tmp/pgdata" : path.resolve(process.cwd(), "pgdata");
 if (!fs.existsSync(pgdata)) {
   fs.mkdirSync(pgdata, { recursive: true });
 }
+console.log(`[DB] Iniciando PGlite en: ${pgdata}`);
 var client = new PGlite(pgdata);
 var db = drizzle(client, { schema: schema_exports });
 

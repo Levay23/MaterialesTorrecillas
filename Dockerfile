@@ -26,7 +26,6 @@ RUN mkdir -p /app/pgdata && chmod 777 /app/pgdata
 EXPOSE 7860
 ENV PORT=7860
 ENV NODE_ENV=production
-ENV PGDATA_PATH=/app/pgdata
 
 WORKDIR /app
 CMD ["node", "--enable-source-maps", "./artifacts/api-server/dist/index.mjs"]
