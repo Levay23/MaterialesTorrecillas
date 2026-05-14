@@ -17,8 +17,7 @@ COPY . .
 RUN pnpm install
 
 # Construir los paquetes necesarios
-RUN pnpm --filter @workspace/db build
-RUN pnpm --filter @workspace/api-server build
+RUN pnpm --filter @workspace/api-server --if-present build
 
 # Hugging Face requiere el puerto 7860
 EXPOSE 7860
