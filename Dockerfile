@@ -21,7 +21,7 @@ COPY lib/api-client-react/package.json ./lib/api-client-react/
 COPY artifacts/api-server/package.json ./artifacts/api-server/
 
 # 3. Instalar solo dependencias de producción
-RUN pnpm install --prod --ignore-scripts
+RUN pnpm install --ignore-scripts
 
 # 4. Copiar el código fuente completo (necesario para imports de workspace)
 COPY lib/ ./lib/
