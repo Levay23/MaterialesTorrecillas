@@ -18806,7 +18806,7 @@ var require_view = __commonJS({
     "use strict";
     var debug = require_src()("express:view");
     var path3 = __require("node:path");
-    var fs3 = __require("node:fs");
+    var fs4 = __require("node:fs");
     var dirname = path3.dirname;
     var basename = path3.basename;
     var extname = path3.extname;
@@ -18886,7 +18886,7 @@ var require_view = __commonJS({
     function tryStat(path4) {
       debug('stat "%s"', path4);
       try {
-        return fs3.statSync(path4);
+        return fs4.statSync(path4);
       } catch (e) {
         return void 0;
       }
@@ -22512,7 +22512,7 @@ var require_send = __commonJS({
     var escapeHtml = require_escape_html();
     var etag = require_etag();
     var fresh = require_fresh();
-    var fs3 = __require("fs");
+    var fs4 = __require("fs");
     var mime = require_mime_types();
     var ms = require_ms();
     var onFinished = require_on_finished();
@@ -22794,7 +22794,7 @@ var require_send = __commonJS({
       var i3 = 0;
       var self2 = this;
       debug('stat "%s"', path4);
-      fs3.stat(path4, function onstat(err2, stat) {
+      fs4.stat(path4, function onstat(err2, stat) {
         var pathEndsWithSep = path4[path4.length - 1] === sep;
         if (err2 && err2.code === "ENOENT" && !extname(path4) && !pathEndsWithSep) {
           return next(err2);
@@ -22811,7 +22811,7 @@ var require_send = __commonJS({
         }
         var p5 = path4 + "." + self2._extensions[i3++];
         debug('stat "%s"', p5);
-        fs3.stat(p5, function(err3, stat) {
+        fs4.stat(p5, function(err3, stat) {
           if (err3) return next(err3);
           if (stat.isDirectory()) return next();
           self2.emit("file", p5, stat);
@@ -22829,7 +22829,7 @@ var require_send = __commonJS({
         }
         var p5 = join2(path4, self2._index[i3]);
         debug('stat "%s"', p5);
-        fs3.stat(p5, function(err3, stat) {
+        fs4.stat(p5, function(err3, stat) {
           if (err3) return next(err3);
           if (stat.isDirectory()) return next();
           self2.emit("file", p5, stat);
@@ -22841,7 +22841,7 @@ var require_send = __commonJS({
     SendStream.prototype.stream = function stream(path4, options) {
       var self2 = this;
       var res = this.res;
-      var stream2 = fs3.createReadStream(path4, options);
+      var stream2 = fs4.createReadStream(path4, options);
       this.emit("stream", stream2);
       stream2.pipe(res);
       function cleanup() {
@@ -25246,7 +25246,7 @@ var require_atomic_sleep = __commonJS({
 var require_sonic_boom = __commonJS({
   "../../node_modules/.pnpm/sonic-boom@4.2.1/node_modules/sonic-boom/index.js"(exports, module2) {
     "use strict";
-    var fs3 = __require("fs");
+    var fs4 = __require("fs");
     var EventEmitter = __require("events");
     var inherits = __require("util").inherits;
     var path3 = __require("path");
@@ -25303,20 +25303,20 @@ var require_sonic_boom = __commonJS({
       const mode = sonic.mode;
       if (sonic.sync) {
         try {
-          if (sonic.mkdir) fs3.mkdirSync(path3.dirname(file2), { recursive: true });
-          const fd = fs3.openSync(file2, flags2, mode);
+          if (sonic.mkdir) fs4.mkdirSync(path3.dirname(file2), { recursive: true });
+          const fd = fs4.openSync(file2, flags2, mode);
           fileOpened(null, fd);
         } catch (err2) {
           fileOpened(err2);
           throw err2;
         }
       } else if (sonic.mkdir) {
-        fs3.mkdir(path3.dirname(file2), { recursive: true }, (err2) => {
+        fs4.mkdir(path3.dirname(file2), { recursive: true }, (err2) => {
           if (err2) return fileOpened(err2);
-          fs3.open(file2, flags2, mode, fileOpened);
+          fs4.open(file2, flags2, mode, fileOpened);
         });
       } else {
-        fs3.open(file2, flags2, mode, fileOpened);
+        fs4.open(file2, flags2, mode, fileOpened);
       }
     }
     function SonicBoom(opts) {
@@ -25357,8 +25357,8 @@ var require_sonic_boom = __commonJS({
         this.flush = flushBuffer;
         this.flushSync = flushBufferSync;
         this._actualWrite = actualWriteBuffer;
-        fsWriteSync = () => fs3.writeSync(this.fd, this._writingBuf);
-        fsWrite = () => fs3.write(this.fd, this._writingBuf, this.release);
+        fsWriteSync = () => fs4.writeSync(this.fd, this._writingBuf);
+        fsWrite = () => fs4.write(this.fd, this._writingBuf, this.release);
       } else if (contentMode === void 0 || contentMode === kContentModeUtf8) {
         this._writingBuf = "";
         this.write = write;
@@ -25367,15 +25367,15 @@ var require_sonic_boom = __commonJS({
         this._actualWrite = actualWrite;
         fsWriteSync = () => {
           if (Buffer.isBuffer(this._writingBuf)) {
-            return fs3.writeSync(this.fd, this._writingBuf);
+            return fs4.writeSync(this.fd, this._writingBuf);
           }
-          return fs3.writeSync(this.fd, this._writingBuf, "utf8");
+          return fs4.writeSync(this.fd, this._writingBuf, "utf8");
         };
         fsWrite = () => {
           if (Buffer.isBuffer(this._writingBuf)) {
-            return fs3.write(this.fd, this._writingBuf, this.release);
+            return fs4.write(this.fd, this._writingBuf, this.release);
           }
-          return fs3.write(this.fd, this._writingBuf, "utf8", this.release);
+          return fs4.write(this.fd, this._writingBuf, "utf8", this.release);
         };
       } else {
         throw new Error(`SonicBoom supports "${kContentModeUtf8}" and "${kContentModeBuffer}", but passed ${contentMode}`);
@@ -25432,7 +25432,7 @@ var require_sonic_boom = __commonJS({
           }
         }
         if (this._fsync) {
-          fs3.fsyncSync(this.fd);
+          fs4.fsyncSync(this.fd);
         }
         const len = this._len;
         if (this._reopening) {
@@ -25546,7 +25546,7 @@ var require_sonic_boom = __commonJS({
       const onDrain = () => {
         if (!this._fsync) {
           try {
-            fs3.fsync(this.fd, (err2) => {
+            fs4.fsync(this.fd, (err2) => {
               this._flushPending = false;
               cb(err2);
             });
@@ -25648,7 +25648,7 @@ var require_sonic_boom = __commonJS({
       const fd = this.fd;
       this.once("ready", () => {
         if (fd !== this.fd) {
-          fs3.close(fd, (err2) => {
+          fs4.close(fd, (err2) => {
             if (err2) {
               return this.emit("error", err2);
             }
@@ -25697,7 +25697,7 @@ var require_sonic_boom = __commonJS({
           buf = this._bufs[0];
         }
         try {
-          const n3 = Buffer.isBuffer(buf) ? fs3.writeSync(this.fd, buf) : fs3.writeSync(this.fd, buf, "utf8");
+          const n3 = Buffer.isBuffer(buf) ? fs4.writeSync(this.fd, buf) : fs4.writeSync(this.fd, buf, "utf8");
           const releasedBufObj = releaseWritingBuf(buf, this._len, n3);
           buf = releasedBufObj.writingBuf;
           this._len = releasedBufObj.len;
@@ -25713,7 +25713,7 @@ var require_sonic_boom = __commonJS({
         }
       }
       try {
-        fs3.fsyncSync(this.fd);
+        fs4.fsyncSync(this.fd);
       } catch {
       }
     }
@@ -25734,7 +25734,7 @@ var require_sonic_boom = __commonJS({
           buf = mergeBuf(this._bufs[0], this._lens[0]);
         }
         try {
-          const n3 = fs3.writeSync(this.fd, buf);
+          const n3 = fs4.writeSync(this.fd, buf);
           buf = buf.subarray(n3);
           this._len = Math.max(this._len - n3, 0);
           if (buf.length <= 0) {
@@ -25762,13 +25762,13 @@ var require_sonic_boom = __commonJS({
       this._writingBuf = this._writingBuf.length ? this._writingBuf : this._bufs.shift() || "";
       if (this.sync) {
         try {
-          const written = Buffer.isBuffer(this._writingBuf) ? fs3.writeSync(this.fd, this._writingBuf) : fs3.writeSync(this.fd, this._writingBuf, "utf8");
+          const written = Buffer.isBuffer(this._writingBuf) ? fs4.writeSync(this.fd, this._writingBuf) : fs4.writeSync(this.fd, this._writingBuf, "utf8");
           release(null, written);
         } catch (err2) {
           release(err2);
         }
       } else {
-        fs3.write(this.fd, this._writingBuf, release);
+        fs4.write(this.fd, this._writingBuf, release);
       }
     }
     function actualWriteBuffer() {
@@ -25777,7 +25777,7 @@ var require_sonic_boom = __commonJS({
       this._writingBuf = this._writingBuf.length ? this._writingBuf : mergeBuf(this._bufs.shift(), this._lens.shift());
       if (this.sync) {
         try {
-          const written = fs3.writeSync(this.fd, this._writingBuf);
+          const written = fs4.writeSync(this.fd, this._writingBuf);
           release(null, written);
         } catch (err2) {
           release(err2);
@@ -25786,7 +25786,7 @@ var require_sonic_boom = __commonJS({
         if (kCopyBuffer) {
           this._writingBuf = Buffer.from(this._writingBuf);
         }
-        fs3.write(this.fd, this._writingBuf, release);
+        fs4.write(this.fd, this._writingBuf, release);
       }
     }
     function actualClose(sonic) {
@@ -25802,12 +25802,12 @@ var require_sonic_boom = __commonJS({
       sonic._lens = [];
       assert3(typeof sonic.fd === "number", `sonic.fd must be a number, got ${typeof sonic.fd}`);
       try {
-        fs3.fsync(sonic.fd, closeWrapped);
+        fs4.fsync(sonic.fd, closeWrapped);
       } catch {
       }
       function closeWrapped() {
         if (sonic.fd !== 1 && sonic.fd !== 2) {
-          fs3.close(sonic.fd, done);
+          fs4.close(sonic.fd, done);
         } else {
           done();
         }
@@ -64652,7 +64652,13 @@ var insertPaymentSchema = createInsertSchema(paymentsTable).omit({ id: true, cre
 
 // ../../lib/db/src/index.ts
 import path from "path";
-var pgdata = path.resolve(process.env["PGDATA_PATH"] || "pgdata");
+import fs2 from "fs";
+var isDocker = fs2.existsSync("/.dockerenv") || fs2.existsSync("/app");
+var pgdata = isDocker ? "/app/pgdata" : path.resolve(process.cwd(), "pgdata");
+console.log(`[DB] Using pgdata path: ${pgdata}`);
+if (isDocker && !fs2.existsSync(pgdata)) {
+  fs2.mkdirSync(pgdata, { recursive: true });
+}
 var client = new Xe2(pgdata);
 var db = drizzle(client, { schema: schema_exports });
 
@@ -65301,7 +65307,7 @@ var import_express11 = __toESM(require_express2(), 1);
 
 // src/services/whatsapp-service.ts
 import path2 from "node:path";
-import fs2 from "node:fs/promises";
+import fs3 from "node:fs/promises";
 
 // src/lib/logger.ts
 var import_pino = __toESM(require_pino(), 1);
@@ -65346,7 +65352,7 @@ async function startConnection() {
     const { useMultiFileAuthState, DisconnectReason, fetchLatestBaileysVersion } = baileys;
     const { Boom } = await import("@hapi/boom");
     const QRCode = await import("qrcode");
-    await fs2.mkdir(SESSION_DIR, { recursive: true });
+    await fs3.mkdir(SESSION_DIR, { recursive: true });
     const { state, saveCreds } = await useMultiFileAuthState(SESSION_DIR);
     let version3 = [2, 3e3, 1015920];
     try {
@@ -65395,7 +65401,7 @@ async function startConnection() {
           connectionStatus = "disconnected";
           connectedPhone = null;
           qrBase64 = null;
-          await fs2.rm(SESSION_DIR, { recursive: true, force: true }).catch(() => {
+          await fs3.rm(SESSION_DIR, { recursive: true, force: true }).catch(() => {
           });
         } else {
           connectionStatus = "disconnected";
@@ -65501,7 +65507,7 @@ async function disconnect() {
   connectionStatus = "disconnected";
   connectedPhone = null;
   qrBase64 = null;
-  await fs2.rm(SESSION_DIR, { recursive: true, force: true }).catch(() => {
+  await fs3.rm(SESSION_DIR, { recursive: true, force: true }).catch(() => {
   });
 }
 
