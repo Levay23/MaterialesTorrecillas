@@ -19,6 +19,7 @@ RUN pnpm install --ignore-scripts
 EXPOSE 7860
 ENV PORT=7860
 ENV NODE_ENV=production
+ENV PGDATA_PATH=/app/pgdata
 
 # Arrancar con el bundle pre-compilado
 CMD ["node", "--enable-source-maps", "./artifacts/api-server/dist/index.mjs"]
