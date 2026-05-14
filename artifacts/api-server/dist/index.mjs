@@ -64652,9 +64652,7 @@ var insertPaymentSchema = createInsertSchema(paymentsTable).omit({ id: true, cre
 
 // ../../lib/db/src/index.ts
 import path from "path";
-import { fileURLToPath } from "url";
-var __dirname2 = path.dirname(fileURLToPath(import.meta.url));
-var pgdata = path.resolve(__dirname2, "..", "..", "..", "pgdata");
+var pgdata = process.env.NODE_ENV === "production" ? "/app/pgdata" : path.resolve(process.cwd(), "pgdata");
 var client = new Xe2(pgdata);
 var db = drizzle(client, { schema: schema_exports });
 
@@ -65944,15 +65942,14 @@ if (Number.isNaN(port) || port <= 0) {
 }
 var seedAdmin = async () => {
   try {
-    const existing = await db.select().from(usersTable).where(eq(usersTable.email, "admin"));
+    const existing = await db.select().from(usersTable).where(eq(usersTable.username, "admin"));
     if (existing.length === 0) {
       const hashedPassword = await bcrypt3.hash("admin123", 10);
       await db.insert(usersTable).values({
         name: "Administrador",
-        email: "admin",
+        username: "admin",
         password: hashedPassword,
-        role: "admin",
-        active: true
+        role: "admin"
       });
       logger.info("Default admin user created");
     }

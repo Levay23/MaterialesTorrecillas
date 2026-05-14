@@ -20,15 +20,14 @@ if (Number.isNaN(port) || port <= 0) {
 
 const seedAdmin = async () => {
   try {
-    const existing = await db.select().from(usersTable).where(eq(usersTable.email, "admin"));
+    const existing = await db.select().from(usersTable).where(eq(usersTable.username, "admin"));
     if (existing.length === 0) {
       const hashedPassword = await bcrypt.hash("admin123", 10);
       await db.insert(usersTable).values({
         name: "Administrador",
-        email: "admin",
+        username: "admin",
         password: hashedPassword,
         role: "admin",
-        active: true,
       });
       logger.info("Default admin user created");
     }
