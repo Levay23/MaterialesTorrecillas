@@ -1,0 +1,30 @@
+# Dependencies
+node_modules
+.pnpm-store
+.local
+
+# Build
+dist
+.next
+.vercel
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Databases
+pgdata
+sqlite.db
+sqlite.db-journal
+
+# Temporary
+scratch
+.gemini
+*.log
+attached_assets
+
+# IDE
+.vscode
+.idea
+.DS_Store

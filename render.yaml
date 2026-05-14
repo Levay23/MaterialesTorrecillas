@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: materiales-torrecillas-api
+    env: node
+    buildCommand: pnpm install && pnpm --filter @workspace/db build && pnpm --filter @workspace/api-server build
+    startCommand: pnpm --filter @workspace/api-server start
+    envVars:
+      - key: NODE_VERSION
+        value: 20.0.0
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL # We'll keep this but it won't be used once Firestore is ready
+        value: internal
+      - key: GROQ_API_KEY
+        sync: false

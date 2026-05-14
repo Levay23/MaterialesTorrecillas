@@ -1,0 +1,40 @@
+import { Router, type IRouter } from "express";
+import healthRouter from "./health";
+import authRouter from "./auth";
+import dashboardRouter from "./dashboard";
+import customersRouter from "./customers";
+import categoriesRouter from "./categories";
+import productsRouter from "./products";
+import salesRouter from "./sales";
+import quotesRouter from "./quotes";
+import suppliersRouter from "./suppliers";
+import purchasesRouter from "./purchases";
+import whatsappRouter from "./whatsapp";
+import aiRouter from "./ai";
+import usersRouter from "./users";
+import reportsRouter from "./reports";
+import leadsRouter from "./leads";
+import logisticsRouter from "./logistics";
+import financialsRouter from "./financials";
+
+const router: IRouter = Router();
+
+router.use(healthRouter);
+router.use(authRouter);
+router.use(dashboardRouter);
+router.use(customersRouter);
+router.use(categoriesRouter);
+router.use(productsRouter);
+router.use(salesRouter);
+router.use(quotesRouter);
+router.use(suppliersRouter);
+router.use(purchasesRouter);
+router.use(whatsappRouter);
+router.use(aiRouter);
+router.use(usersRouter);
+router.use(reportsRouter);
+router.use(leadsRouter);
+router.use(logisticsRouter);
+router.use(financialsRouter);
+
+export default router;
