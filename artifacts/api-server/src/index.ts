@@ -1,6 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
-import { db, usersTable } from "@workspace/db";
+import { db, usersTable, runMigrations } from "@workspace/db";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
@@ -36,12 +36,22 @@ const seedAdmin = async () => {
   }
 };
 
-seedAdmin().then(() => {
-  app.listen(port, (err) => {
-    if (err) {
-      logger.error({ err }, "Error listening on port");
-      process.exit(1);
-    }
-    logger.info({ port }, "Server listening");
-  });
-});
+const startServer = async () => {
+  try {
+    // 1. Ejecutar migraciones automáticas
+    await runMigrations();
+
+    // 2. Sembrar datos iniciales
+    await seedAdmin();
+
+    // 3. Iniciar servidor
+    app.listen(port, () => {
+      logger.info({ port }, "Server listening and database ready");
+    });
+  } catch (err) {
+    logger.error({ err }, "Critical failure during startup");
+    process.exit(1);
+  }
+};
+
+startServer();
