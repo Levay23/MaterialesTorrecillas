@@ -71,7 +71,7 @@ router.post("/ai/chat", async (req, res): Promise<void> => {
       method: "POST",
       headers: { "Content-Type": "application/json", "Authorization": `Bearer ${config.apiKey}` },
       body: JSON.stringify({
-        model: config.model || "llama3-8b-8192",
+        model: (config.model === "llama3-8b-8192" ? "llama-3.3-70b-versatile" : config.model) || "llama-3.3-70b-versatile",
         messages: [{ role: "system", content: fullPrompt }, { role: "user", content: message }],
         temperature: Number(config.temperature) || 0.7,
         max_tokens: config.maxTokens || 500,

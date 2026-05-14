@@ -94,7 +94,7 @@ export default function AIChatPage() {
                 <p className="font-semibold text-sm">Asistente Materiales Torrecillas</p>
                 <div className="flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                  <p className="text-xs text-gray-400">En línea · {config?.model || "llama3-8b-8192"}</p>
+                  <p className="text-xs text-gray-400">En línea · {config?.model === "llama3-8b-8192" ? "llama-3.3-70b-versatile" : (config?.model || "llama-3.3-70b-versatile")}</p>
                 </div>
               </div>
             </div>
@@ -193,7 +193,7 @@ export default function AIChatPage() {
             </div>
             <div className="space-y-1.5">
               <Label>Modelo</Label>
-              <Input {...register("model")} defaultValue="llama3-8b-8192" />
+              <Input {...register("model")} defaultValue="llama-3.3-70b-versatile" />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5"><Label>Temperatura (0-2)</Label><Input type="number" step="0.1" min="0" max="2" {...register("temperature")} /></div>
