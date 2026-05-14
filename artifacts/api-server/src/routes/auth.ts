@@ -33,7 +33,7 @@ router.get("/auth/me", async (req, res): Promise<void> => {
   const token = req.cookies?.auth_token || req.headers.authorization?.replace("Bearer ", "");
   
   if (!token) {
-    res.status(401).json({ error: "No session found" });
+    res.json(null);
     return;
   }
 
@@ -42,7 +42,7 @@ router.get("/auth/me", async (req, res): Promise<void> => {
     const [user] = await db.select().from(usersTable).where(eq(usersTable.id, payload.id));
     
     if (!user) {
-      res.status(401).json({ error: "User no longer exists" });
+      res.json(null);
       return;
     }
 
@@ -54,7 +54,7 @@ router.get("/auth/me", async (req, res): Promise<void> => {
       createdAt: user.createdAt 
     });
   } catch (err) {
-    res.status(401).json({ error: "Invalid or expired token" });
+    res.json(null);
   }
 });
 
