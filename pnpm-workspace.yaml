@@ -73,6 +73,9 @@ onlyBuiltDependencies:
   - esbuild
   - msw
   - unrs-resolver
+  - bcrypt
+  - sharp
+  - "@electric-sql/pglite"
 
 overrides:
   # drizzle-kit uses esbuild internally on an older version that's vulnerable, this overrides it
