@@ -4,7 +4,7 @@ import * as schema from "./schema";
 import path from "path";
 import { fileURLToPath } from "url";
 
-const pgdata = process.env.NODE_ENV === "production" 
+const pgdata = process.platform === "linux"
   ? "/app/pgdata" 
   : path.resolve(process.cwd(), "pgdata");
 const client = new PGlite(pgdata);

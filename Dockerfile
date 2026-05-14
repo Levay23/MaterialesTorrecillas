@@ -7,6 +7,7 @@ RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 RUN npm install -g pnpm@9 --no-fund --no-audit
 
 WORKDIR /app
+RUN mkdir -p /app/pgdata
 
 # Copiar TODO el proyecto (ya incluye dist/ pre-compilado)
 COPY . .
