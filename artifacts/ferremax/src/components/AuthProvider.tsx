@@ -25,11 +25,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   } as any);
 
+  const isAuthenticated = !!user && !isError;
+
   return (
     <AuthContext.Provider value={{
-      user: user || null,
+      user: isAuthenticated ? user : null,
       isLoading,
-      isAuthenticated: !!user && !isError,
+      isAuthenticated,
     }}>
       {children}
     </AuthContext.Provider>

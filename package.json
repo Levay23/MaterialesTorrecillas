@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "preinstall": "node -e \"if(!/pnpm/.test(process.env.npm_config_user_agent)) { console.error('Use pnpm instead'); process.exit(1); }\"",
-    "dev": "concurrently \"cross-env PORT=3000 pnpm --filter @workspace/api-server dev\" \"cross-env PORT=5173 BASE_PATH=/ pnpm --filter @workspace/ferremax dev\"",
+    "dev": "concurrently \"cross-env PORT=3000 pnpm --filter @workspace/api-server dev\" \"cross-env PORT=5173 BASE_PATH=/ pnpm --filter @workspace/Materiales Torrecillas dev\"",
     "build": "pnpm run typecheck && pnpm -r --if-present run build",
     "typecheck:libs": "tsc --build",
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
@@ -24,3 +24,4 @@
     ]
   }
 }
+

@@ -16,7 +16,7 @@ interface Message { role: "user" | "bot"; content: string; }
 
 export default function AIChatPage() {
   const [messages, setMessages] = useState<Message[]>([
-    { role: "bot", content: "¡Hola! Soy la asistente virtual de FerreMax. ¿En qué puedo ayudarte hoy?" }
+    { role: "bot", content: "¡Hola! Soy la asistente virtual de Materiales Torrecillas. ¿En qué puedo ayudarte hoy?" }
   ]);
   const [input, setInput] = useState("");
   const [configDialog, setConfigDialog] = useState(false);
@@ -91,7 +91,7 @@ export default function AIChatPage() {
                 <Bot size={18} className="text-white" />
               </div>
               <div>
-                <p className="font-semibold text-sm">Asistente FerreMax</p>
+                <p className="font-semibold text-sm">Asistente Materiales Torrecillas</p>
                 <div className="flex items-center gap-1.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500" />
                   <p className="text-xs text-gray-400">En línea · {config?.model || "llama3-8b-8192"}</p>
@@ -213,3 +213,4 @@ export default function AIChatPage() {
     </div>
   );
 }
+

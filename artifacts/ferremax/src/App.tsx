@@ -61,7 +61,7 @@ function AuthGate() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-600 to-amber-500">
         <div className="text-white text-center">
           <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-orange-100">Cargando FerreMax...</p>
+          <p className="text-orange-100">Cargando Materiales Torrecillas...</p>
         </div>
       </div>
     );
@@ -107,3 +107,4 @@ function App() {
 }
 
 export default App;
+

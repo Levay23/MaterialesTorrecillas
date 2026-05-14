@@ -58,19 +58,24 @@ router.get("/dashboard/recent-activity", async (req, res): Promise<void> => {
 });
 
 router.get("/dashboard/top-products", async (req, res): Promise<void> => {
-  const result = await db.execute(sql`
-    SELECT
-      (item->>'productId')::int as "productId",
-      item->>'productName' as name,
-      SUM((item->>'quantity')::int)::int as "totalSold",
-      SUM((item->>'total')::numeric)::float as revenue
-    FROM sales, jsonb_array_elements(items) as item
-    WHERE status = 'completed' AND created_at >= NOW() - INTERVAL '30 days'
-    GROUP BY "productId", name
-    ORDER BY "totalSold" DESC
-    LIMIT 10
-  `);
-  res.json(result.rows);
+  try {
+    const result = await db.execute(sql`
+      SELECT
+        (item->>'productId')::int as "productId",
+        item->>'productName' as name,
+        SUM((item->>'quantity')::int)::int as "totalSold",
+        SUM((item->>'total')::numeric)::float as revenue
+      FROM sales, jsonb_array_elements(items) as item
+      WHERE status = 'completed' AND created_at >= NOW() - INTERVAL '30 days'
+      GROUP BY "productId", name
+      ORDER BY "totalSold" DESC
+      LIMIT 10
+    `);
+    res.json(result.rows || []);
+  } catch (error) {
+    console.error("Error in top-products:", error);
+    res.json([]);
+  }
 });
 
 router.get("/dashboard/low-stock", async (req, res): Promise<void> => {

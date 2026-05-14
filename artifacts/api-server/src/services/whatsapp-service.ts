@@ -58,7 +58,7 @@ export async function startConnection() {
       auth: state,
       printQRInTerminal: false,
       logger: silentLogger,
-      browser: ["FerreMax CRM", "Chrome", "120.0"],
+      browser: ["Materiales Torrecillas CRM", "Chrome", "120.0"],
     });
 
     sock.ev.on("connection.update", async (update: any) => {
@@ -165,7 +165,7 @@ async function handleAutoReply(convoId: number, jid: string, userMessage: string
     const knowledgeContext = knowledge.map(k => `${k.title}: ${k.content}`).join("\n");
     const systemPrompt =
       config.systemPrompt ||
-      "Eres una asesora profesional de ferretería FerreMax. Responde de forma concisa y útil. Máximo 3 oraciones.";
+      "Eres una asesora profesional de ferretería Materiales Torrecillas. Responde de forma concisa y útil. Máximo 3 oraciones.";
 
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -221,3 +221,4 @@ export async function disconnect() {
   qrBase64 = null;
   await fs.rm(SESSION_DIR, { recursive: true, force: true }).catch(() => {});
 }
+

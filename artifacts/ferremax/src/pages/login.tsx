@@ -37,7 +37,7 @@ export default function LoginPage({ onLogin }: { onLogin: () => void }) {
               <Wrench size={32} className="text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight">FerreMax</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Materiales Torrecillas</h1>
           <p className="text-orange-100 mt-1 text-sm">Sistema CRM</p>
         </div>
 
@@ -87,3 +87,4 @@ export default function LoginPage({ onLogin }: { onLogin: () => void }) {
     </div>
   );
 }
+

@@ -7,14 +7,25 @@ const router: Router = Router();
 
 async function getOrCreateConfig() {
   const configs = await db.select().from(aiConfigTable).limit(1);
-  if (configs.length) return configs[0];
+  const defaultPrompt = "Hola, soy Andrea, tu asistente virtual profesional de Materiales Torrecillas. Soy amable, experta en ferretería y construcción, y estoy aquí para ayudarte de manera eficiente. Siempre saludo cordialmente, soy muy educada y proporciono recomendaciones precisas basadas en las necesidades del cliente y nuestra base de conocimiento.";
+  
+  if (configs.length) {
+    const config = configs[0];
+    // Actualizar si hay API Key en el entorno y no en la DB
+    if (process.env.GROQ_API_KEY && (!config.apiKey || config.apiKey === "***")) {
+      await db.update(aiConfigTable).set({ apiKey: process.env.GROQ_API_KEY, enabled: true }).where(eq(aiConfigTable.id, config.id));
+    }
+    return config;
+  }
+
   const [c] = await db.insert(aiConfigTable).values({
     model: "llama3-8b-8192",
     temperature: "0.7",
     maxTokens: 500,
-    enabled: false,
+    enabled: true,
+    apiKey: process.env.GROQ_API_KEY || null,
     autoReplyEnabled: false,
-    systemPrompt: "Eres una asesora profesional de ferretería. Eres amable, experta y rápida. Siempre saludas cordialmente y recomiendas productos según la necesidad del cliente.",
+    systemPrompt: defaultPrompt,
   }).returning();
   return c;
 }
@@ -46,12 +57,12 @@ router.post("/ai/chat", async (req, res): Promise<void> => {
   const knowledge = await db.select().from(knowledgeItemsTable).limit(20);
   const knowledgeContext = knowledge.map(k => `${k.title}: ${k.content}`).join("\n");
   
-  const systemPrompt = config.systemPrompt || "Eres una asesora profesional de ferretería FerreMax. Eres amable, experta y rápida. Siempre saludas cordialmente y recomiendas productos según la necesidad del cliente.";
+  const systemPrompt = config.systemPrompt || "Eres una asesora profesional de ferretería Materiales Torrecillas. Eres amable, experta y rápida. Siempre saludas cordialmente y recomiendas productos según la necesidad del cliente.";
   const fullPrompt = `${systemPrompt}\n\nBase de conocimiento:\n${knowledgeContext}`;
   
   if (!config.apiKey || config.apiKey === "***") {
     // Demo response when no API key
-    res.json({ response: `¡Hola! Soy la asistente virtual de FerreMax. Estoy lista para ayudarte con herramientas, materiales y cotizaciones. Tu mensaje: "${message}". Para activar la IA completa, configura tu API key de Groq en Configuración > IA.` });
+    res.json({ response: `¡Hola! Soy la asistente virtual de Materiales Torrecillas. Estoy lista para ayudarte con herramientas, materiales y cotizaciones. Tu mensaje: "${message}". Para activar la IA completa, configura tu API key de Groq en Configuración > IA.` });
     return;
   }
 
@@ -103,3 +114,4 @@ router.delete("/knowledge/:id", async (req, res): Promise<void> => {
 });
 
 export default router;
+

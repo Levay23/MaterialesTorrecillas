@@ -1,11 +1,11 @@
-# FerreMax CRM
+# Materiales Torrecillas CRM
 
-Sistema CRM/ERP profesional para FerreMax Medellín, ferretería con módulos de ventas POS, inventario, clientes, cotizaciones, compras, WhatsApp, chatbot IA y reportes.
+Sistema CRM/ERP profesional para Materiales Torrecillas Medellín, ferretería con módulos de ventas POS, inventario, clientes, cotizaciones, compras, WhatsApp, chatbot IA y reportes.
 
 ## Run & Operate
 
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
-- `pnpm --filter @workspace/ferremax run dev` — run the frontend (port 22372)
+- `pnpm --filter @workspace/Materiales Torrecillas run dev` — run the frontend (port 22372)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -30,9 +30,9 @@ Sistema CRM/ERP profesional para FerreMax Medellín, ferretería con módulos de
 - `lib/api-spec/openapi.yaml` — OpenAPI 3 spec (source of truth for API contract)
 - `lib/api-client-react/src/generated/` — Generated React Query hooks and Zod schemas
 - `artifacts/api-server/src/routes/` — All Express route handlers
-- `artifacts/ferremax/src/pages/` — All frontend page components
-- `artifacts/ferremax/src/components/Layout.tsx` — Main sidebar navigation layout
-- `artifacts/ferremax/src/components/AuthProvider.tsx` — Auth context
+- `artifacts/Materiales Torrecillas/src/pages/` — All frontend page components
+- `artifacts/Materiales Torrecillas/src/components/Layout.tsx` — Main sidebar navigation layout
+- `artifacts/Materiales Torrecillas/src/components/AuthProvider.tsx` — Auth context
 
 ## Architecture decisions
 
@@ -45,7 +45,7 @@ Sistema CRM/ERP profesional para FerreMax Medellín, ferretería con módulos de
 
 ## Product
 
-FerreMax CRM incluye:
+Materiales Torrecillas CRM incluye:
 - **Dashboard**: KPIs, gráficas de ventas, stock bajo, actividad reciente
 - **Clientes**: CRUD con tipos (regular, mayorista, VIP, crédito), historial de compras
 - **Productos**: CRUD con categorías, precios (venta/mayorista/compra), ajuste de stock manual
@@ -74,3 +74,4 @@ FerreMax CRM incluye:
 ## Pointers
 
 - See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+

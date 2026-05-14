@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm";
 import { logger } from "../lib/logger";
 
 const router: Router = Router();
-const SECRET = process.env.SESSION_SECRET || "ferremax-secret-2024";
+const SECRET = process.env.SESSION_SECRET || "Materiales Torrecillas-secret-2024";
 
 router.post("/auth/login", async (req, res): Promise<void> => {
   const { username, password } = req.body;
@@ -31,27 +31,38 @@ router.post("/auth/login", async (req, res): Promise<void> => {
 
 router.get("/auth/me", async (req, res): Promise<void> => {
   const token = req.cookies?.auth_token || req.headers.authorization?.replace("Bearer ", "");
+  
   if (!token) {
-    res.status(401).json({ error: "Unauthorized" });
+    res.status(401).json({ error: "No session found" });
     return;
   }
+
   try {
     const payload = jwt.verify(token, SECRET) as { id: number };
     const [user] = await db.select().from(usersTable).where(eq(usersTable.id, payload.id));
+    
     if (!user) {
-      res.status(401).json({ error: "Unauthorized" });
+      res.status(401).json({ error: "User no longer exists" });
       return;
     }
-    res.json({ id: user.id, name: user.name, username: user.username, role: user.role, createdAt: user.createdAt });
-  } catch {
-    res.status(401).json({ error: "Unauthorized" });
+
+    res.json({ 
+      id: user.id, 
+      name: user.name, 
+      username: user.username, 
+      role: user.role, 
+      createdAt: user.createdAt 
+    });
+  } catch (err) {
+    res.status(401).json({ error: "Invalid or expired token" });
   }
 });
 
 router.post("/auth/logout", async (req, res): Promise<void> => {
-  res.clearCookie("auth_token");
+  res.clearCookie("auth_token", { path: "/", httpOnly: true, secure: true, sameSite: "none" });
   res.json({ success: true });
 });
 
 export { SECRET };
 export default router;
+
