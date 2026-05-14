@@ -1,0 +1,1 @@
+{"version":3,"file":"purchaseInput.d.ts","sourceRoot":"","sources":["../../../src/generated/types/purchaseInput.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,sBAAsB,EAAE,MAAM,0BAA0B,CAAC;AAEvE,MAAM,WAAW,aAAa;IAC5B,UAAU,EAAE,MAAM,CAAC;IACnB,KAAK,EAAE,sBAAsB,EAAE,CAAC;IAChC,KAAK,CAAC,EAAE,MAAM,CAAC;CAChB"}
