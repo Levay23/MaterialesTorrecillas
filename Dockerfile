@@ -5,8 +5,8 @@ RUN apt-get update && apt-get install -y \
     openssl \
     && rm -rf /var/lib/apt/lists/*
 
-# Habilitar pnpm
-RUN corepack enable && corepack prepare pnpm@latest --activate
+# Instalar pnpm usando npm en lugar de corepack para mayor estabilidad
+RUN npm install -g pnpm@9
 
 WORKDIR /app
 
