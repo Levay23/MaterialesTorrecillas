@@ -28,6 +28,5 @@ ENV PORT=7860
 ENV NODE_ENV=production
 ENV PGDATA_PATH=/app/pgdata
 
-# Ejecutar el servidor desde su directorio para resolución de módulos correcta
-WORKDIR /app/artifacts/api-server
-CMD ["node", "--enable-source-maps", "./dist/index.mjs"]
+WORKDIR /app
+CMD ["node", "--enable-source-maps", "./artifacts/api-server/dist/index.mjs"]
