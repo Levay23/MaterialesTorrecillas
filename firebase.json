@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "artifacts/Materiales Torrecillas/dist/public",
+    "public": "artifacts/ferremax/dist/public",
     "ignore": [
       "firebase.json",
       "**/.*",
