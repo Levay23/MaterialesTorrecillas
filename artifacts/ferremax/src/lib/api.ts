@@ -1,5 +1,7 @@
 export const BASE_URL = import.meta.env.BASE_URL?.replace(/\/$/, "") || "";
-export const API_BASE = `${BASE_URL}/api`;
+export const API_BASE = import.meta.env.PROD 
+  ? "https://levayjorge21-materiales.hf.space/api" 
+  : `${BASE_URL}/api`;
 
 export async function apiFetch<T = unknown>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${path}`, {
