@@ -3,10 +3,9 @@ node_modules
 .pnpm-store
 .local
 
-# Build
-dist
-.next
-.vercel
+# Build - excluir solo el frontend compilado, NO el dist del servidor
+artifacts/ferremax/dist
+artifacts/mockup-sandbox/dist
 
 # Environment
 .env
