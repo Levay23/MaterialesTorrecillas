@@ -159,7 +159,7 @@ export async function startConnection() {
 async function handleAutoReply(convoId: number, jid: string, userMessage: string) {
   try {
     const [config] = await db.select().from(aiConfigTable).limit(1);
-    if (!config?.autoReplyEnabled || !config?.apiKey) return;
+    if (!config?.apiKey) return;
 
     const knowledge = await db.select().from(knowledgeItemsTable).limit(20);
     const knowledgeContext = knowledge.map(k => `${k.title}: ${k.content}`).join("\n");
@@ -171,7 +171,7 @@ async function handleAutoReply(convoId: number, jid: string, userMessage: string
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${config.apiKey}` },
       body: JSON.stringify({
-        model: config.model || "llama3-8b-8192",
+        model: (config.model === "llama3-8b-8192" ? "llama-3.3-70b-versatile" : config.model) || "llama-3.3-70b-versatile",
         messages: [
           { role: "system", content: `${systemPrompt}\n\nBase de conocimiento:\n${knowledgeContext}` },
           { role: "user", content: userMessage },
@@ -183,7 +183,11 @@ async function handleAutoReply(convoId: number, jid: string, userMessage: string
 
     const data = (await response.json()) as any;
     const reply = data.choices?.[0]?.message?.content?.trim();
-    if (!reply || !sock) return;
+    if (!reply) {
+      logger.error({ data }, "Groq did not return a valid reply for WhatsApp");
+      return;
+    }
+    if (!sock) return;
 
     await sock.sendMessage(jid, { text: reply });
 
