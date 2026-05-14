@@ -48944,13 +48944,13 @@ import { eq } from "drizzle-orm";
 var router2 = (0, import_express2.Router)();
 var SECRET = process.env.SESSION_SECRET || "ferremax-secret-2024";
 router2.post("/auth/login", async (req, res) => {
-  const { email: email3, password } = req.body;
-  if (!email3 || !password) {
-    res.status(400).json({ error: "Email and password required" });
+  const { username, password } = req.body;
+  if (!username || !password) {
+    res.status(400).json({ error: "Username and password required" });
     return;
   }
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email3));
-  if (!user || !user.active) {
+  const [user] = await db.select().from(usersTable).where(eq(usersTable.username, username));
+  if (!user) {
     res.status(401).json({ error: "Invalid credentials" });
     return;
   }
@@ -48959,9 +48959,9 @@ router2.post("/auth/login", async (req, res) => {
     res.status(401).json({ error: "Invalid credentials" });
     return;
   }
-  const token = import_jsonwebtoken.default.sign({ id: user.id, email: user.email, role: user.role }, SECRET, { expiresIn: "7d" });
+  const token = import_jsonwebtoken.default.sign({ id: user.id, username: user.username, role: user.role }, SECRET, { expiresIn: "7d" });
   res.cookie("auth_token", token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1e3 });
-  res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role, active: user.active, createdAt: user.createdAt } });
+  res.json({ token, user: { id: user.id, name: user.name, username: user.username, role: user.role, createdAt: user.createdAt } });
 });
 router2.get("/auth/me", async (req, res) => {
   const token = req.cookies?.auth_token || req.headers.authorization?.replace("Bearer ", "");
@@ -48972,11 +48972,11 @@ router2.get("/auth/me", async (req, res) => {
   try {
     const payload = import_jsonwebtoken.default.verify(token, SECRET);
     const [user] = await db.select().from(usersTable).where(eq(usersTable.id, payload.id));
-    if (!user || !user.active) {
+    if (!user) {
       res.status(401).json({ error: "Unauthorized" });
       return;
     }
-    res.json({ id: user.id, name: user.name, email: user.email, role: user.role, active: user.active, createdAt: user.createdAt });
+    res.json({ id: user.id, name: user.name, username: user.username, role: user.role, createdAt: user.createdAt });
   } catch {
     res.status(401).json({ error: "Unauthorized" });
   }

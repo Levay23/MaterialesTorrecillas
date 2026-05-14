@@ -18,9 +18,6 @@ import AIChatPage from "@/pages/ai-chat";
 import KnowledgePage from "@/pages/knowledge";
 import UsersPage from "@/pages/users";
 import ReportsPage from "@/pages/reports";
-import LeadsPage from "@/pages/leads";
-import LogisticsPage from "@/pages/logistics";
-import FinancialsPage from "@/pages/financials";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient({
@@ -37,15 +34,12 @@ function AppRoutes({ onLogout }: { onLogout: () => void }) {
     <Layout onLogout={onLogout}>
       <Switch>
         <Route path="/" component={DashboardPage} />
-        <Route path="/prospectos" component={LeadsPage} />
         <Route path="/clientes" component={CustomersPage} />
         <Route path="/productos" component={ProductsPage} />
         <Route path="/ventas" component={SalesPage} />
         <Route path="/cotizaciones" component={QuotesPage} />
-        <Route path="/logistica" component={LogisticsPage} />
         <Route path="/proveedores" component={SuppliersPage} />
         <Route path="/compras" component={PurchasesPage} />
-        <Route path="/finanzas" component={FinancialsPage} />
         <Route path="/whatsapp" component={WhatsAppPage} />
         <Route path="/ia" component={AIChatPage} />
         <Route path="/conocimiento" component={KnowledgePage} />

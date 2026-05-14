@@ -15,15 +15,12 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/" },
-  { label: "Prospectos", icon: UserPlus, path: "/prospectos" },
   { label: "Clientes", icon: Users, path: "/clientes" },
   { label: "Productos", icon: Package, path: "/productos" },
   { label: "Ventas / POS", icon: ShoppingCart, path: "/ventas" },
   { label: "Cotizaciones", icon: FileText, path: "/cotizaciones" },
-  { label: "Logística", icon: Truck, path: "/logistica" },
   { label: "Proveedores", icon: Truck, path: "/proveedores" },
   { label: "Compras", icon: ClipboardList, path: "/compras" },
-  { label: "Finanzas", icon: Wallet, path: "/finanzas" },
   { label: "WhatsApp", icon: MessageCircle, path: "/whatsapp" },
   { label: "Asistente IA", icon: Bot, path: "/ia" },
   { label: "Base Conocimiento", icon: BookOpen, path: "/conocimiento" },

@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
-type LoginForm = { email: string; password: string };
+type LoginForm = { username: string; password: string };
 
 export default function LoginPage({ onLogin }: { onLogin: () => void }) {
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<LoginForm>();
@@ -43,18 +43,18 @@ export default function LoginPage({ onLogin }: { onLogin: () => void }) {
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-5">
           <div className="space-y-1.5">
-            <Label htmlFor="email">Correo electrónico</Label>
+            <Label htmlFor="username">Nombre de usuario</Label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
               <Input
-                id="email"
-                type="email"
-                placeholder="usuario@ferremax.com"
+                id="username"
+                type="text"
+                placeholder="usuario"
                 className="pl-9"
-                {...register("email", { required: "Correo requerido" })}
+                {...register("username", { required: "Usuario requerido" })}
               />
             </div>
-            {errors.email && <p className="text-xs text-red-500">{errors.email.message}</p>}
+            {errors.username && <p className="text-xs text-red-500">{errors.username.message}</p>}
           </div>
 
           <div className="space-y-1.5">
@@ -80,7 +80,7 @@ export default function LoginPage({ onLogin }: { onLogin: () => void }) {
           </Button>
 
           <p className="text-center text-xs text-gray-400 pt-2">
-            Admin demo: <strong>admin@ferremax.com</strong> / <strong>admin123</strong>
+            Admin demo: <strong>admin</strong> / <strong>admin123</strong>
           </p>
         </form>
       </motion.div>
