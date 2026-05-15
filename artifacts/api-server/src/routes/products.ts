@@ -7,8 +7,8 @@ const router: Router = Router();
 function formatProduct(p: any, catName?: string | null, supName?: string | null) {
   return {
     ...p,
-    purchasePrice: Number(p.purchasePrice || 0),
-    salePrice: Number(p.salePrice || 0),
+    purchasePrice: Number(p.cost || 0),
+    salePrice: Number(p.price || 0),
     wholesalePrice: p.wholesalePrice ? Number(p.wholesalePrice) : null,
     categoryName: catName ?? null,
     supplierName: supName ?? null,
@@ -31,7 +31,7 @@ router.get("/products", async (req, res): Promise<void> => {
   `);
   res.json(result.rows.map((r: any) => ({
     id: r.id, name: r.name, sku: r.sku, barcode: r.barcode, description: r.description,
-    purchasePrice: Number(r.purchase_price || 0), salePrice: Number(r.sale_price || 0),
+    purchasePrice: Number(r.cost || 0), salePrice: Number(r.price || 0),
     wholesalePrice: r.wholesale_price ? Number(r.wholesale_price) : null,
     categoryId: r.category_id, categoryName: r.category_name,
     brand: r.brand, supplierId: r.supplier_id, supplierName: r.supplier_name,
@@ -40,9 +40,17 @@ router.get("/products", async (req, res): Promise<void> => {
 });
 
 router.post("/products", async (req, res): Promise<void> => {
-  const { name, sku, salePrice, stock, minStock, ...rest } = req.body;
+  const { name, sku, salePrice, purchasePrice, stock, minStock, ...rest } = req.body;
   if (!name || !sku || !salePrice) { res.status(400).json({ error: "Name, sku, salePrice required" }); return; }
-  const [p] = await db.insert(productsTable).values({ name, sku, salePrice: String(salePrice), stock: stock ?? 0, minStock: minStock ?? 5, ...rest }).returning();
+  const [p] = await db.insert(productsTable).values({ 
+    name, 
+    sku, 
+    price: String(salePrice), 
+    cost: String(purchasePrice || 0),
+    stock: String(stock || 0), 
+    minStock: String(minStock || 5), 
+    ...rest 
+  }).returning();
   await db.insert(activityLogTable).values({ type: "product", description: `Nuevo producto: ${name}`, entityId: p.id });
   res.status(201).json(formatProduct(p));
 });
@@ -60,7 +68,7 @@ router.get("/products/:id", async (req, res): Promise<void> => {
   const r: any = result.rows[0];
   res.json({
     id: r.id, name: r.name, sku: r.sku, barcode: r.barcode, description: r.description,
-    purchasePrice: Number(r.purchase_price || 0), salePrice: Number(r.sale_price || 0),
+    purchasePrice: Number(r.cost || 0), salePrice: Number(r.price || 0),
     wholesalePrice: r.wholesale_price ? Number(r.wholesale_price) : null,
     categoryId: r.category_id, categoryName: r.category_name,
     brand: r.brand, supplierId: r.supplier_id, supplierName: r.supplier_name,
@@ -71,8 +79,8 @@ router.get("/products/:id", async (req, res): Promise<void> => {
 router.patch("/products/:id", async (req, res): Promise<void> => {
   const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
   const updates: Record<string, any> = { ...req.body };
-  if (updates.salePrice !== undefined) updates.salePrice = String(updates.salePrice);
-  if (updates.purchasePrice !== undefined) updates.purchasePrice = String(updates.purchasePrice);
+  if (updates.salePrice !== undefined) { updates.price = String(updates.salePrice); delete updates.salePrice; }
+  if (updates.purchasePrice !== undefined) { updates.cost = String(updates.purchasePrice); delete updates.purchasePrice; }
   if (updates.wholesalePrice !== undefined) updates.wholesalePrice = String(updates.wholesalePrice);
   const [p] = await db.update(productsTable).set(updates).where(eq(productsTable.id, id)).returning();
   if (!p) { res.status(404).json({ error: "Not found" }); return; }
@@ -90,8 +98,9 @@ router.post("/products/:id/adjust-stock", async (req, res): Promise<void> => {
   const { quantity, type, reason } = req.body;
   const [p] = await db.select().from(productsTable).where(eq(productsTable.id, id));
   if (!p) { res.status(404).json({ error: "Not found" }); return; }
-  const delta = type === "entrada" ? quantity : -quantity;
-  const newStock = Math.max(0, p.stock + delta);
+  const delta = type === "entrada" ? Number(quantity) : -Number(quantity);
+  const currentStock = Number(p.stock || 0);
+  const newStock = String(Math.max(0, currentStock + delta));
   const [updated] = await db.update(productsTable).set({ stock: newStock }).where(eq(productsTable.id, id)).returning();
   await db.insert(activityLogTable).values({ type: "stock", description: `${type === "entrada" ? "Entrada" : "Salida"} de stock: ${p.name} (${reason})`, entityId: id });
   res.json(formatProduct(updated));
