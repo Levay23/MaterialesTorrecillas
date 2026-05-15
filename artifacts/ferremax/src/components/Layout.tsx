@@ -24,7 +24,7 @@ const navItems = [
   { label: "Compras", icon: ClipboardList, path: "/compras" },
   { label: "WhatsApp", icon: MessageCircle, path: "/whatsapp" },
   { label: "Asistente IA", icon: Bot, path: "/ia" },
-  { label: "Configuración IA", icon: BookOpen, path: "/conocimiento" },
+  { label: "Base de Conocimiento", icon: BookOpen, path: "/conocimiento" },
   { label: "Reportes", icon: BarChart3, path: "/reportes" },
   { label: "Usuarios", icon: UserCog, path: "/usuarios", roles: ["Super Admin"] },
 ];

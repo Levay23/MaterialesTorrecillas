@@ -80,49 +80,10 @@ export default function KnowledgePage() {
     <div className="space-y-6 pb-10">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Configuración IA</h1>
-          <p className="text-sm text-gray-500">Personalidad, motor y base de conocimientos de Andrea</p>
+          <h1 className="text-2xl font-bold text-gray-900">Base de Conocimiento</h1>
+          <p className="text-sm text-gray-500">Reglas, horarios y políticas específicas del negocio</p>
         </div>
       </div>
-
-      {/* AI Assistant Personality & Motor */}
-      <Card className="border-orange-100 shadow-sm overflow-hidden">
-        <div className="bg-orange-50/50 px-5 py-3 border-b border-orange-100 flex items-center gap-2">
-          <Bot size={18} className="text-orange-600" />
-          <h2 className="font-semibold text-orange-900">Personalidad y Motor del Asistente</h2>
-        </div>
-        <CardContent className="p-5">
-          <form onSubmit={aiForm.handleSubmit(onConfigSubmit)} className="space-y-4">
-            <div className="space-y-1.5">
-              <Label>Personalidad (Prompt del Sistema)</Label>
-              <textarea 
-                {...aiForm.register("systemPrompt")} 
-                defaultValue={config?.systemPrompt || "Hola, soy Andrea, tu asistente virtual profesional de Materiales Torrecillas. Soy amable, experta en ferretería y construcción, y estoy aquí para ayudarte de manera eficiente. Siempre saludo cordialmente, soy muy educada y proporciono recomendaciones precisas basadas en las necesidades del cliente y nuestra base de conocimiento."} 
-                rows={4} 
-                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-orange-500"
-                placeholder="Describe cómo debe comportarse Andrea..."
-              />
-              <p className="text-[10px] text-gray-400 italic">Describe el tono: amable, profesional, atento, etc.</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <Label>API Key (Groq)</Label>
-                <Input type="password" {...aiForm.register("apiKey")} defaultValue={config?.apiKey || ""} placeholder="gsk_..." />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Modelo</Label>
-                <Input {...aiForm.register("model")} defaultValue={config?.model || "llama-3.3-70b-versatile"} />
-              </div>
-              <div className="flex items-end">
-                <Button type="submit" className="w-full bg-orange-600 hover:bg-orange-700" disabled={updateConfigMut.isPending}>
-                  {updateConfigMut.isPending ? "Guardando..." : "Guardar Configuración"}
-                </Button>
-              </div>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
 
       <div className="border-t border-gray-100 pt-6">
         <div className="flex items-center justify-between mb-5">
