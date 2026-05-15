@@ -8,6 +8,13 @@
       "when": 1778729285385,
       "tag": "0000_stiff_major_mapleleaf",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1778806483489,
+      "tag": "0001_motionless_eddie_brock",
+      "breakpoints": true
     }
   ]
 }
