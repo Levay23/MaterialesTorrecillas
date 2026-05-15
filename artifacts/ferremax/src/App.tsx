@@ -9,6 +9,7 @@ import LoginPage from "@/pages/login";
 import DashboardPage from "@/pages/dashboard";
 import CustomersPage from "@/pages/customers";
 import ProductsPage from "@/pages/products";
+import CategoriesPage from "@/pages/categories";
 import SalesPage from "@/pages/sales";
 import QuotesPage from "@/pages/quotes";
 import SuppliersPage from "@/pages/suppliers";
@@ -35,6 +36,7 @@ function AppRoutes({ onLogout }: { onLogout: () => void }) {
       <Switch>
         <Route path="/" component={DashboardPage} />
         <Route path="/clientes" component={CustomersPage} />
+        <Route path="/categorias" component={CategoriesPage} />
         <Route path="/productos" component={ProductsPage} />
         <Route path="/ventas" component={SalesPage} />
         <Route path="/cotizaciones" component={QuotesPage} />

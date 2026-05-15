@@ -1,6 +1,6 @@
 import path from "node:path";
 import fs from "node:fs/promises";
-import { db, conversationsTable, messagesTable, aiConfigTable, knowledgeItemsTable } from "@workspace/db";
+import { db, conversationsTable, messagesTable, aiConfigTable, knowledgeItemsTable, productsTable, categoriesTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { logger } from "../lib/logger";
 import { getOrCreateConfig } from "../routes/ai";
@@ -164,6 +164,24 @@ async function handleAutoReply(convoId: number, jid: string, userMessage: string
 
     const knowledge = await db.select().from(knowledgeItemsTable).limit(20);
     const knowledgeContext = knowledge.map(k => `${k.title}: ${k.content}`).join("\n");
+
+    const products = await db
+      .select({
+        name: productsTable.name,
+        price: productsTable.price,
+        stock: productsTable.stock,
+        unit: productsTable.unit,
+        category: categoriesTable.name
+      })
+      .from(productsTable)
+      .leftJoin(categoriesTable, eq(productsTable.categoryId, categoriesTable.id))
+      .where(eq(productsTable.status, "active"))
+      .limit(100);
+
+    const productContext = products
+      .map(p => `- ${p.name} (${p.category || "General"}): $${p.price} por ${p.unit}. Stock: ${p.stock} unidades.`)
+      .join("\n");
+
     const systemPrompt =
       config.systemPrompt ||
       "Eres una asesora profesional de ferretería Materiales Torrecillas. Responde de forma concisa y útil. Máximo 3 oraciones.";
@@ -174,7 +192,7 @@ async function handleAutoReply(convoId: number, jid: string, userMessage: string
       body: JSON.stringify({
         model: (config.model === "llama3-8b-8192" ? "llama-3.3-70b-versatile" : config.model) || "llama-3.3-70b-versatile",
         messages: [
-          { role: "system", content: `${systemPrompt}\n\nBase de conocimiento:\n${knowledgeContext}` },
+          { role: "system", content: `${systemPrompt}\n\nBase de conocimiento general:\n${knowledgeContext}\n\nCatálogo de productos reales:\n${productContext}` },
           { role: "user", content: userMessage },
         ],
         temperature: Number(config.temperature) || 0.7,

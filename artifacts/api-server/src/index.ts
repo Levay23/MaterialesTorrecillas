@@ -64,7 +64,6 @@ const startServer = async () => {
 
     // 2. Sembrar datos iniciales
     await seedAdmin();
-    await seedKnowledgeBase();
 
     // 3. Iniciar servidor
     app.listen(port, () => {

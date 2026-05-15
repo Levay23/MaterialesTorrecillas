@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db, aiConfigTable, knowledgeItemsTable } from "@workspace/db";
+import { db, aiConfigTable, knowledgeItemsTable, productsTable, categoriesTable } from "@workspace/db";
 import { eq, sql } from "drizzle-orm";
 import { logger } from "../lib/logger";
 
@@ -53,12 +53,30 @@ router.post("/ai/chat", async (req, res): Promise<void> => {
   
   const config = await getOrCreateConfig();
   
-  // Fetch knowledge base for context
+  // Fetch knowledge base for general context
   const knowledge = await db.select().from(knowledgeItemsTable).limit(20);
   const knowledgeContext = knowledge.map(k => `${k.title}: ${k.content}`).join("\n");
+
+  // Fetch real products for catalog context
+  const products = await db
+    .select({
+      name: productsTable.name,
+      price: productsTable.price,
+      stock: productsTable.stock,
+      unit: productsTable.unit,
+      category: categoriesTable.name
+    })
+    .from(productsTable)
+    .leftJoin(categoriesTable, eq(productsTable.categoryId, categoriesTable.id))
+    .where(eq(productsTable.status, "active"))
+    .limit(100);
+
+  const productContext = products
+    .map(p => `- ${p.name} (${p.category || "General"}): $${p.price} por ${p.unit}. Stock: ${p.stock} unidades.`)
+    .join("\n");
   
   const systemPrompt = config.systemPrompt || "Eres una asesora profesional de ferretería Materiales Torrecillas. Eres amable, experta y rápida. Siempre saludas cordialmente y recomiendas productos según la necesidad del cliente.";
-  const fullPrompt = `${systemPrompt}\n\nBase de conocimiento:\n${knowledgeContext}`;
+  const fullPrompt = `${systemPrompt}\n\nBase de conocimiento general:\n${knowledgeContext}\n\nCatálogo de productos y precios actuales:\n${productContext}`;
   
   if (!config.apiKey || config.apiKey === "***") {
     // Demo response when no API key

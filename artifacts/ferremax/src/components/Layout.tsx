@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Users, Package, ShoppingCart, FileText,
   Truck, ClipboardList, MessageCircle, Bot, BookOpen,
   BarChart3, LogOut, Menu, X, Hammer, Bell,
-  ChevronRight, UserCog, UserPlus, Wallet
+  ChevronRight, UserCog, UserPlus, Wallet, FolderTree
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { apiFetch } from "@/lib/api";
@@ -17,13 +17,14 @@ const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, path: "/" },
   { label: "Clientes", icon: Users, path: "/clientes" },
   { label: "Productos", icon: Package, path: "/productos" },
+  { label: "Categorías", icon: FolderTree, path: "/categorias" },
   { label: "Ventas / POS", icon: ShoppingCart, path: "/ventas" },
   { label: "Cotizaciones", icon: FileText, path: "/cotizaciones" },
   { label: "Proveedores", icon: Truck, path: "/proveedores" },
   { label: "Compras", icon: ClipboardList, path: "/compras" },
   { label: "WhatsApp", icon: MessageCircle, path: "/whatsapp" },
   { label: "Asistente IA", icon: Bot, path: "/ia" },
-  { label: "Base Conocimiento", icon: BookOpen, path: "/conocimiento" },
+  { label: "Configuración IA", icon: BookOpen, path: "/conocimiento" },
   { label: "Reportes", icon: BarChart3, path: "/reportes" },
   { label: "Usuarios", icon: UserCog, path: "/usuarios", roles: ["Super Admin"] },
 ];

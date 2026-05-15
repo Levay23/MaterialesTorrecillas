@@ -110,10 +110,21 @@ export default function WhatsAppPage() {
             </>
           ) : (
             <>
-              <Badge className={`gap-1.5 px-3 ${isConnecting ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-600"}`}>
-                {isConnecting ? <RefreshCw size={12} className="animate-spin" /> : <WifiOff size={12} />}
-                {isConnecting ? "Conectando..." : "Desconectado"}
-              </Badge>
+              {isConnecting ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-red-50 hover:text-red-700 hover:border-red-200 gap-1.5"
+                  onClick={() => disconnectMut.mutate()}
+                  disabled={disconnectMut.isPending}
+                >
+                  <RefreshCw size={12} className="animate-spin" /> Cancelar Conexión
+                </Button>
+              ) : (
+                <Badge className="bg-gray-100 text-gray-600 gap-1.5 px-3">
+                  <WifiOff size={12} /> Desconectado
+                </Badge>
+              )}
               {!isConnecting && (
                 <Button
                   size="sm"
@@ -159,9 +170,19 @@ export default function WhatsAppPage() {
                     : "Haz clic en \"Conectar WhatsApp\" para vincular tu número y recibir mensajes en tiempo real."}
                 </p>
                 {isConnecting && (
-                  <div className="flex items-center justify-center gap-2 text-yellow-600">
-                    <RefreshCw size={16} className="animate-spin" />
-                    <span className="text-sm">Iniciando sesión de WhatsApp...</span>
+                  <div className="flex flex-col items-center justify-center gap-4">
+                    <div className="flex items-center gap-2 text-yellow-600">
+                      <RefreshCw size={16} className="animate-spin" />
+                      <span className="text-sm">Iniciando sesión de WhatsApp...</span>
+                    </div>
+                    <Button
+                      variant="outline"
+                      className="text-red-600 border-red-200 hover:bg-red-50"
+                      onClick={() => disconnectMut.mutate()}
+                      disabled={disconnectMut.isPending}
+                    >
+                      <Power size={14} className="mr-2" /> Cancelar / Reiniciar
+                    </Button>
                   </div>
                 )}
                 {!isConnecting && (
